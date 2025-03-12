@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扑克牌游戏</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #e74c3c;
+            --bg-color: #f5f5f5;
+            --card-width: 90px;
+            --card-height: 126px;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1, h2, h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .game-info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin: 10px 0;
+        }
+        
+        button {
+            padding: 10px 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        button.secondary {
+            background-color: var(--secondary-color);
+        }
+        
+        button.secondary:hover {
+            background-color: #c0392b;
+        }
+        
+        .game-area {
+            display: none;
+        }
+        
+        .card-deck {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .card {
+            width: var(--card-width);
+            height: var(--card-height);
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            cursor: grab;
+            perspective: 1000px;
+            transition: transform 0.3s;
+            user-select: none;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .card-front {
+            background-image: linear-gradient(45deg, #6d83f2, #4481eb);
+            color: white;
+            font-size: 24px;
+            transform: rotateY(180deg);
+        }
+        
+        .card-back {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%234481eb" /><path d="M0 0L100 100M100 0L0 100" stroke="%23ffffff" stroke-width="2" /></svg>');
+            background-size: 20px 20px;
+            background-color: #3498db;
+            border: 5px solid white;
+        }
+        
+        .card-value {
+            font-size: 32px;
+            font-weight: bold;
+        }
+        
+        .card-suit {
+            font-size: 48px;
+            line-height: 1;
+        }
+        
+        .red {
+            color: #e74c3c;
+        }
+        
+        .black {
+            color: #2c3e50;
+        }
+        
+        .player-hand {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+            margin: 10px 0;
+        }
+        
+        .card-selection {
+            display: none;
+            margin: 5px 0;
+            order: 1;
+        }
+        
+        .game-section {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .game-section h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        
+        .card-slots {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin: 10px 0;
+        }
+        
+        .card-slot {
+            width: var(--card-width);
+            height: var(--card-height);
+            border: 2px dashed #bdc3c7;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #95a5a6;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .card-slot.highlight {
+            border-color: var(--primary-color);
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+        
+        .card-slot.filled {
+            border-style: solid;
+            border-color: #27ae60;
+            background-color: rgba(46, 204, 113, 0.05);
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #2ecc71;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            opacity: 1;
+        }
+        
+        /* 修改游戏界面布局 */
+        #play-area {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        /* 卡牌选择区放在上方 */
+        .card-selection {
+            margin: 5px 0 15px 0;
+            order: 1;
+        }
+        
+        /* 游戏区域容器水平排列 */
+        .game-section-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            width: 100%;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .card, .card-slot {
+                width: calc(var(--card-width) * 0.8);
+                height: calc(var(--card-height) * 0.8);
+            }
+            
+            .card-value {
+                font-size: 24px;
+            }
+            
+            .card-suit {
+                font-size: 30px;
+            }
+            
+            .game-section-container {
+                flex-direction: column;
+            }
+        }
+        
+        /* 三个游戏区域等宽分布 */
+        .game-section {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        /* 为已选择的卡牌添加样式 */
+        .card.selected {
+            opacity: 0.5;
+            pointer-events: none;
+            border: 2px solid #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>扑克牌游戏</h1>
+        
+        <!-- 首页界面 -->
+        <div id="start-screen">
+            <div class="game-info">
+                <p>扑克牌游戏：</p>
+                <ul>
+                    <li>玩家与电脑各自抽取6张不重复的牌</li>
+                    <li>抽牌后可以进行以下游戏：</li>
+                    <ul>
+                        <li><strong>单张比大小</strong>：从手牌中选择一张牌，比较大小</li>
+                        <li><strong>十点半</strong>：从手牌中选择两张牌，计算点数和</li>
+                        <li><strong>炸金花</strong>：从手牌中选择三张牌，比较牌型大小</li>
+                    </ul>
+                </ul>
+            </div>
+            
+            <div class="button-group">
+                <button id="new-game-btn">开始新游戏</button>
+            </div>
+        </div>
+        
+        <!-- 游戏区域 -->
+        <div id="game-area" class="game-area">
+            <h2 id="player-title">玩家</h2>
+            
+            <!-- 抽牌区域 -->
+            <div id="draw-area" class="game-section">
+                <h3>抽牌区域</h3>
+                <p>点击按钮开始游戏</p>
+                
+                <div id="card-deck" class="card-deck">
+                    <div class="card">
+                        <div class="card-inner">
+                            <div class="card-back"></div>
+                            <div class="card-front"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button id="draw-cards-btn">抽取6张牌</button>
+                </div>
+            </div>
+            
+            <!-- 玩家手牌 -->
+            <div id="play-area" style="display: none;">
+                <div class="game-section">
+                    <h3>你的手牌</h3>
+                    <div id="player-hand" class="player-hand"></div>
+                </div>
+                
+                <!-- 卡牌选择区域 -->
+                <div id="card-selection" class="card-selection">
+                    <div class="game-section-container">
+                        <div class="game-section">
+                            <h3>单张比大小</h3>
+                            <p>从手牌中选择一张牌</p>
+                            <div class="card-slots">
+                                <div id="single-slot" class="card-slot" data-game="single" data-slot="0">
+                                    拖放一张牌到这里
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="game-section">
+                            <h3>十点半</h3>
+                            <p>从手牌中选择两张牌</p>
+                            <div class="card-slots">
+                                <div id="halften-slot-1" class="card-slot" data-game="halften" data-slot="0">
+                                    拖放第一张牌
+                                </div>
+                                <div id="halften-slot-2" class="card-slot" data-game="halften" data-slot="1">
+                                    拖放第二张牌
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="game-section">
+                            <h3>炸金花</h3>
+                            <p>从手牌中选择三张牌</p>
+                            <div class="card-slots">
+                                <div id="poker-slot-1" class="card-slot" data-game="poker" data-slot="0">
+                                    拖放第一张牌
+                                </div>
+                                <div id="poker-slot-2" class="card-slot" data-game="poker" data-slot="1">
+                                    拖放第二张牌
+                                </div>
+                                <div id="poker-slot-3" class="card-slot" data-game="poker" data-slot="2">
+                                    拖放第三张牌
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button id="reset-cards-btn" class="secondary">重置选择</button>
+                        <button id="confirm-selection-btn">重新发牌</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // 扑克牌数据
+        const suits = ['♥', '♦', '♠', '♣'];
+        const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+        const pointValues = {
+            '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10,
+            'J': 0.5, 'Q': 0.5, 'K': 0.5, 'A': 1
+        };
+        
+        // 游戏状态
+        let gameState = {
+            deck: [],
+            playerCards: [],
+            computerCards: [],
+            playerSelection: {
+                single: null,
+                halften: [],
+                poker: []
+            },
+            computerSelection: {
+                single: null,
+                halften: [],
+                poker: []
+            }
+        };
+        
+        // DOM元素
+        const startScreen = document.getElementById('start-screen');
+        const gameArea = document.getElementById('game-area');
+        const drawArea = document.getElementById('draw-area');
+        const playArea = document.getElementById('play-area');
+        const cardDeck = document.getElementById('card-deck');
+        const playerHand = document.getElementById('player-hand');
+        const cardSelection = document.getElementById('card-selection');
+        const playerTitle = document.getElementById('player-title');
+        
+        // 按钮
+        const drawCardsBtn = document.getElementById('draw-cards-btn');
+        const resetCardsBtn = document.getElementById('reset-cards-btn');
+        const confirmSelectionBtn = document.getElementById('confirm-selection-btn');
+        const newGameBtn = document.getElementById('new-game-btn');
+        
+        // 初始化扑克牌并洗牌
+        function initializeDeck() {
+            const deck = [];
+            for (const suit of suits) {
+                for (const value of values) {
+                    deck.push({ suit, value });
+                }
+            }
+            
+            // 洗牌
+            for (let i = deck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [deck[i], deck[j]] = [deck[j], deck[i]];
+            }
+            return deck;
+        }
+        
+        // 初始化
+        function initialize() {
+            // 绑定新游戏按钮事件
+            newGameBtn.addEventListener('click', function() {
+                gameState.deck = initializeDeck();
+                startScreen.style.display = 'none';
+                gameArea.style.display = 'block';
+            });
+            
+            // 绑定其他按钮事件
+            drawCardsBtn.addEventListener('click', drawCards);
+            resetCardsBtn.addEventListener('click', resetSelection);
+            confirmSelectionBtn.addEventListener('click', confirmSelection);
+        }
+        
+        // 抽取卡牌
+        function drawCards() {
+            const playerHand = [];
+            const computerHand = [];
+            let remainingDeck = [...gameState.deck];
+            
+            // 随机抽取玩家和电脑的牌
+            for (let i = 0; i < 6; i++) {
+                if (remainingDeck.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * remainingDeck.length);
+                    playerHand.push(remainingDeck.splice(randomIndex, 1)[0]);
+                    
+                    if (remainingDeck.length > 0) {
+                        const computerIndex = Math.floor(Math.random() * remainingDeck.length);
+                        computerHand.push(remainingDeck.splice(computerIndex, 1)[0]);
+                    }
+                }
+            }
+            
+            // 更新游戏状态
+            gameState.playerCards = playerHand;
+            gameState.computerCards = computerHand;
+            
+            // 让电脑随机选牌
+            selectComputerCards();
+            
+            // 显示手牌区域
+            drawArea.style.display = 'none';
+            playArea.style.display = 'block';
+            cardSelection.style.display = 'block';
+            
+            // 渲染手牌并初始化拖放功能
+            renderPlayerHand();
+            initializeDragAndDrop();
+        }
+        
+        // 让电脑随机选择牌
+        function selectComputerCards() {
+            const computerCards = [...gameState.computerCards];
+            const selection = gameState.computerSelection;
+            
+            // 随机选择单张比大小的牌
+            if (computerCards.length > 0) {
+                const randomIndex = Math.floor(Math.random() * computerCards.length);
+                selection.single = { card: computerCards[randomIndex], index: randomIndex };
+                computerCards.splice(randomIndex, 1);
+            }
+            
+            // 随机选择十点半的牌
+            for (let i = 0; i < 2 && computerCards.length > 0; i++) {
+                const randomIndex = Math.floor(Math.random() * computerCards.length);
+                selection.halften.push({ card: computerCards[randomIndex], index: randomIndex });
+                computerCards.splice(randomIndex, 1);
+            }
+            
+            // 随机选择炸金花的牌
+            for (let i = 0; i < 3 && computerCards.length > 0; i++) {
+                const randomIndex = Math.floor(Math.random() * computerCards.length);
+                selection.poker.push({ card: computerCards[randomIndex], index: randomIndex });
+                computerCards.splice(randomIndex, 1);
+            }
+        }
+        
+        // 渲染玩家手牌
+        function renderPlayerHand() {
+            playerHand.innerHTML = '';
+            
+            gameState.playerCards.forEach((card, index) => {
+                const isRed = card.suit === '♥' || card.suit === '♦';
+                const cardElement = document.createElement('div');
+                cardElement.classList.add('card', 'flipped');
+                cardElement.dataset.index = index;
+                cardElement.draggable = true;
+                
+                cardElement.innerHTML = `
+                    <div class="card-inner">
+                        <div class="card-back"></div>
+                        <div class="card-front ${isRed ? 'red' : 'black'}">
+                            <div class="card-value">${card.value}</div>
+                            <div class="card-suit">${card.suit}</div>
+                        </div>
+                    </div>
+                `;
+                
+                playerHand.appendChild(cardElement);
+            });
+        }
+        
+        // 初始化拖放功能
+        function initializeDragAndDrop() {
+            // 为所有卡牌添加拖拽事件
+            document.querySelectorAll('#player-hand .card').forEach(card => {
+                card.addEventListener('dragstart', function(e) {
+                    if (this.classList.contains('selected')) {
+                        e.preventDefault();
+                        return false;
+                    }
+                    
+                    e.dataTransfer.setData('text/plain', this.dataset.index);
+                    this.classList.add('dragging');
+                });
+                
+                card.addEventListener('dragend', function() {
+                    this.classList.remove('dragging');
+                });
+            });
+            
+            // 为所有卡槽添加拖放事件
+            document.querySelectorAll('.card-slot').forEach(slot => {
+                slot.addEventListener('dragover', e => {
+                    e.preventDefault();
+                    slot.classList.add('highlight');
+                });
+                
+                slot.addEventListener('dragleave', () => {
+                    slot.classList.remove('highlight');
+                });
+                
+                slot.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('highlight');
+                    
+                    const cardIndex = e.dataTransfer.getData('text/plain');
+                    const gameType = this.dataset.game;
+                    const slotIndex = parseInt(this.dataset.slot);
+                    
+                    handleCardDrop(cardIndex, gameType, slotIndex, gameState.playerCards[cardIndex]);
+                });
+            });
+        }
+        
+        // 处理卡牌放入卡槽
+        function handleCardDrop(cardIndex, gameType, slotIndex, card) {
+            // 获取卡槽元素
+            const slot = document.querySelector(`.card-slot[data-game="${gameType}"][data-slot="${slotIndex}"]`);
+            if (!slot) return;
+            
+            // 清除原始卡槽内容
+            if (slot.classList.contains('filled')) {
+                let originalCardIndex;
+                const playerSelection = gameState.playerSelection;
+                
+                // 获取原始卡牌索引
+                if (gameType === 'single' && playerSelection.single) {
+                    originalCardIndex = playerSelection.single.index;
+                } else if (gameType === 'halften' && playerSelection.halften[slotIndex]) {
+                    originalCardIndex = playerSelection.halften[slotIndex].index;
+                } else if (gameType === 'poker' && playerSelection.poker[slotIndex]) {
+                    originalCardIndex = playerSelection.poker[slotIndex].index;
+                }
+                
+                // 恢复原始卡牌的可选择状态
+                if (originalCardIndex !== undefined) {
+                    const originalCard = document.querySelector(`#player-hand .card[data-index="${originalCardIndex}"]`);
+                    if (originalCard) {
+                        originalCard.classList.remove('selected');
+                        originalCard.style.pointerEvents = 'auto';
+                    }
+                }
+                
+                slot.innerHTML = '';
+            }
+            
+            // 填充卡槽
+            const isRed = card.suit === '♥' || card.suit === '♦';
+            slot.innerHTML = `
+                <div class="card flipped">
+                    <div class="card-inner" style="transform: rotateY(180deg);">
+                    <div class="card-back"></div>
+                    <div class="card-front ${isRed ? 'red' : 'black'}">
+                            <div class="card-value">${card.value}</div>
+                            <div class="card-suit">${card.suit}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            slot.classList.add('filled');
+            
+            // 标记原始卡牌为已选择
+            const originalCard = document.querySelector(`#player-hand .card[data-index="${cardIndex}"]`);
+            if (originalCard) {
+                originalCard.classList.add('selected');
+            }
+            
+            // 更新游戏状态
+            const playerSelection = gameState.playerSelection;
+            
+            if (gameType === 'single') {
+                playerSelection.single = { index: parseInt(cardIndex), card: card };
+            } else if (gameType === 'halften') {
+                playerSelection.halften[slotIndex] = { index: parseInt(cardIndex), card: card };
+            } else if (gameType === 'poker') {
+                playerSelection.poker[slotIndex] = { index: parseInt(cardIndex), card: card };
+            }
+        }
+        
+        // 重置选择
+        function resetSelection() {
+            const playerSelection = gameState.playerSelection;
+            
+            // 恢复所有卡牌的可选择状态
+            document.querySelectorAll('#player-hand .card.selected').forEach(card => {
+                card.classList.remove('selected');
+                card.style.pointerEvents = 'auto';
+            });
+            
+            // 重置游戏状态
+            playerSelection.single = null;
+            playerSelection.halften = [];
+            playerSelection.poker = [];
+            
+            // 重置界面
+            const slots = document.querySelectorAll('.card-slot');
+            slots.forEach(slot => {
+                slot.innerHTML = slot.dataset.game === 'single' ? '拖放一张牌到这里' : 
+                                 `拖放第${parseInt(slot.dataset.slot) + 1}张牌`;
+                slot.classList.remove('filled');
+            });
+        }
+        
+        // 确认选择
+        function confirmSelection() {
+            const playerSelection = gameState.playerSelection;
+            
+            // 检查是否所有游戏都已选择完毕
+            const isSingleComplete = playerSelection.single !== null;
+            const isHalftenComplete = playerSelection.halften.length === 2 && 
+                                     playerSelection.halften[0] !== null && 
+                                     playerSelection.halften[1] !== null;
+            const isPokerComplete = playerSelection.poker.length === 3 && 
+                                   playerSelection.poker[0] !== null && 
+                                   playerSelection.poker[1] !== null && 
+                                   playerSelection.poker[2] !== null;
+            
+            if (!isSingleComplete || !isHalftenComplete || !isPokerComplete) {
+                showNotification('请完成所有游戏的牌选择');
+                return;
+            }
+            
+            // 自动开始新游戏
+            showNotification('游戏完成！自动开始新游戏');
+            startNewGame();
+        }
+        
+        // 完全重新开始游戏
+        function startNewGame() {
+            // 创建全新的游戏
+            gameState.deck = initializeDeck();
+            gameState.playerCards = [];
+            gameState.computerCards = [];
+            gameState.playerSelection = {
+                single: null,
+                halften: [],
+                poker: []
+            };
+            gameState.computerSelection = {
+                single: null,
+                halften: [],
+                poker: []
+            };
+            
+            // 清空玩家手牌区域
+            playerHand.innerHTML = '';
+            
+            // 重置卡槽
+            resetSelection();
+            
+            // 重新抽牌
+            drawCards();
+        }
+        
+        // 显示通知
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 初始化
+        initialize();
+    </script>
+</body>
+</html>
