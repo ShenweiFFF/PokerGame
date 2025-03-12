@@ -232,6 +232,7 @@
             text-align: center;
             background-color: rgba(255, 255, 255, 0.05);
             padding: 10px;
+            position: relative;
         }
         
         .card-slot.highlight {
@@ -240,9 +241,9 @@
         }
         
         .card-slot.filled {
-            border-style: solid;
-            border-color: var(--secondary-color);
-            background-color: rgba(255, 112, 67, 0.1);
+            border: 2px solid var(--secondary-color);
+            padding: 0;
+            overflow: hidden;
         }
         
         .notification {
@@ -428,18 +429,99 @@
             flex: 1;
             min-width: 200px;
         }
+        
+        /* 卡牌槽里的卡片保持与手牌相同尺寸 */
+        .card-slot .card {
+            width: 100%;
+            height: 100%;
+            box-shadow: none;
+            margin: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        /* 确保所有卡片一致大小 */
+        .card-front, .card-back, .card-inner, .card {
+            width: var(--card-width);
+            height: var(--card-height);
+        }
+        
+        /* 确保卡槽定位正确 */
+        .card-slot {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* 调整卡槽内卡片边框样式 */
+        .card-slot .card {
+            border: none;
+        }
+        
+        /* 修复卡槽样式 */
+        .card-slot.filled {
+            border: 2px solid var(--secondary-color);
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        /* 卡槽中的卡片内部元素位置修正 */
+        .card-slot .card-inner {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        /* 确保卡槽中卡片前面样式一致 */
+        .card-slot .card-front {
+            font-size: 24px;
+        }
+        
+        /* 确保卡槽中卡片和手牌卡片值大小一致 */
+        .card-slot .card-value {
+            font-size: 35px;
+            margin-bottom: 5px;
+        }
+        
+        /* 确保卡槽中花色和手牌花色大小一致 */
+        .card-slot .card-suit {
+            font-size: 50px;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .card-slot .card-value {
+                font-size: 28px;
+            }
+            
+            .card-slot .card-suit {
+                font-size: 40px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .card-slot .card-value {
+                font-size: 24px;
+            }
+            
+            .card-slot .card-suit {
+                font-size: 32px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>秋香与饭饭扑克牌游戏</h1>
+        <h1>扑克牌游戏</h1>
         
         <!-- 首页界面 -->
         <div id="start-screen">
             <div class="game-info">
                 <p>扑克牌游戏：</p>
                 <ul>
-                    <li>秋香与饭饭各自抽取6张不重复的牌</li>
+                    <li>各自抽取6张不重复的牌</li>
                     <li>抽牌后可以进行以下游戏：</li>
                     <ul>
                         <li><strong>单张比大小</strong>：从手牌中选择一张牌，比较大小</li>
