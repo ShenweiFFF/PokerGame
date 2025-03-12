@@ -52,12 +52,13 @@
         .button-group {
             display: flex;
             justify-content: center;
-            gap: 5px;
+            flex-wrap: wrap;
+            gap: 8px;
             margin: 10px 0;
         }
         
         button {
-            padding: 10px 15px;
+            padding: 12px 20px;
             background-color: var(--primary-color);
             color: white;
             border: none;
@@ -65,11 +66,16 @@
             cursor: pointer;
             font-size: 16px;
             transition: background-color 0.3s, transform 0.2s;
+            min-width: 120px;
         }
         
         button:hover {
             background-color: #2980b9;
             transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(1px);
         }
         
         button.secondary {
@@ -98,7 +104,6 @@
             border-radius: 10px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
             position: relative;
-            cursor: grab;
             perspective: 1000px;
             transition: transform 0.3s;
             user-select: none;
@@ -169,7 +174,7 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 5px;
+            gap: 8px;
             margin: 10px 0;
         }
         
@@ -181,21 +186,23 @@
         
         .game-section {
             background-color: #f8f9fa;
-            padding: 10px;
+            padding: 15px;
             border-radius: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
         
         .game-section h3 {
             margin-top: 0;
             margin-bottom: 10px;
+            font-size: 18px;
         }
         
         .card-slots {
             display: flex;
             justify-content: center;
-            gap: 5px;
+            flex-wrap: wrap;
+            gap: 8px;
             margin: 10px 0;
         }
         
@@ -210,6 +217,7 @@
             color: #95a5a6;
             font-size: 14px;
             transition: all 0.3s;
+            text-align: center;
         }
         
         .card-slot.highlight {
@@ -230,12 +238,15 @@
             transform: translateX(-50%);
             background-color: #2ecc71;
             color: white;
-            padding: 10px 20px;
+            padding: 12px 20px;
             border-radius: 5px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             opacity: 0;
             transition: opacity 0.3s;
             z-index: 1000;
+            font-size: 16px;
+            max-width: 90%;
+            text-align: center;
         }
         
         .notification.show {
@@ -263,14 +274,69 @@
             width: 100%;
         }
         
+        /* 为已选择的卡牌添加样式 */
+        .card.selected {
+            opacity: 0.5;
+            border: 2px solid #e74c3c;
+        }
+        
+        /* 卡牌点击交互样式 */
+        .card.selectable {
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .card.selectable:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(52, 152, 219, 0.1);
+            border-radius: 10px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .card.selectable:hover:after {
+            opacity: 1;
+        }
+        
+        /* 选择模式指示器 */
+        .selection-mode {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: inline-block;
+            margin: 5px auto;
+            text-align: center;
+        }
+        
+        /* 响应式设计优化 */
         @media (max-width: 768px) {
+            :root {
+                --card-width: 70px;
+                --card-height: 98px;
+            }
+            
             .container {
                 padding: 10px;
             }
             
-            .card, .card-slot {
-                width: calc(var(--card-width) * 0.8);
-                height: calc(var(--card-height) * 0.8);
+            h1 {
+                font-size: 24px;
+                margin-bottom: 15px;
+            }
+            
+            h2 {
+                font-size: 20px;
+            }
+            
+            h3 {
+                font-size: 16px;
             }
             
             .card-value {
@@ -284,19 +350,68 @@
             .game-section-container {
                 flex-direction: column;
             }
+            
+            button {
+                padding: 12px 16px;
+                font-size: 15px;
+                min-width: 100px;
+            }
+            
+            .game-info {
+                font-size: 14px;
+                padding: 12px;
+            }
+            
+            .card-slot {
+                font-size: 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            :root {
+                --card-width: 55px;
+                --card-height: 77px;
+            }
+            
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 8px;
+            }
+            
+            .card-value {
+                font-size: 20px;
+            }
+            
+            .card-suit {
+                font-size: 24px;
+            }
+            
+            .player-hand {
+                gap: 5px;
+            }
+            
+            .card-slots {
+                gap: 5px;
+            }
+            
+            .game-section {
+                padding: 10px;
+            }
+            
+            button {
+                padding: 10px 15px;
+                font-size: 14px;
+                min-width: 90px;
+            }
         }
         
         /* 三个游戏区域等宽分布 */
         .game-section {
             flex: 1;
             min-width: 200px;
-        }
-        
-        /* 为已选择的卡牌添加样式 */
-        .card.selected {
-            opacity: 0.5;
-            pointer-events: none;
-            border: 2px solid #e74c3c;
         }
     </style>
 </head>
@@ -351,6 +466,7 @@
             <div id="play-area" style="display: none;">
                 <div class="game-section">
                     <h3>你的手牌</h3>
+                    <div id="selection-mode" class="selection-mode" style="display: none;">当前选择: <span id="current-mode">无</span></div>
                     <div id="player-hand" class="player-hand"></div>
                 </div>
                 
@@ -362,8 +478,11 @@
                             <p>从手牌中选择一张牌</p>
                             <div class="card-slots">
                                 <div id="single-slot" class="card-slot" data-game="single" data-slot="0">
-                                    拖放一张牌到这里
+                                    点击选择一张牌
                                 </div>
+                            </div>
+                            <div class="button-group">
+                                <button id="select-single-btn" class="secondary">选择单张牌</button>
                             </div>
                         </div>
                         
@@ -372,11 +491,14 @@
                             <p>从手牌中选择两张牌</p>
                             <div class="card-slots">
                                 <div id="halften-slot-1" class="card-slot" data-game="halften" data-slot="0">
-                                    拖放第一张牌
+                                    点击选择第一张牌
                                 </div>
                                 <div id="halften-slot-2" class="card-slot" data-game="halften" data-slot="1">
-                                    拖放第二张牌
+                                    点击选择第二张牌
                                 </div>
+                            </div>
+                            <div class="button-group">
+                                <button id="select-halften-btn" class="secondary">选择十点半牌</button>
                             </div>
                         </div>
                         
@@ -385,14 +507,17 @@
                             <p>从手牌中选择三张牌</p>
                             <div class="card-slots">
                                 <div id="poker-slot-1" class="card-slot" data-game="poker" data-slot="0">
-                                    拖放第一张牌
+                                    点击选择第一张牌
                                 </div>
                                 <div id="poker-slot-2" class="card-slot" data-game="poker" data-slot="1">
-                                    拖放第二张牌
+                                    点击选择第二张牌
                                 </div>
                                 <div id="poker-slot-3" class="card-slot" data-game="poker" data-slot="2">
-                                    拖放第三张牌
+                                    点击选择第三张牌
                                 </div>
+                            </div>
+                            <div class="button-group">
+                                <button id="select-poker-btn" class="secondary">选择炸金花牌</button>
                             </div>
                         </div>
                     </div>
@@ -431,7 +556,8 @@
                 single: null,
                 halften: [],
                 poker: []
-            }
+            },
+            currentMode: null // 当前选择模式：'single', 'halften', 'poker'
         };
         
         // DOM元素
@@ -443,12 +569,17 @@
         const playerHand = document.getElementById('player-hand');
         const cardSelection = document.getElementById('card-selection');
         const playerTitle = document.getElementById('player-title');
+        const selectionMode = document.getElementById('selection-mode');
+        const currentMode = document.getElementById('current-mode');
         
         // 按钮
         const drawCardsBtn = document.getElementById('draw-cards-btn');
         const resetCardsBtn = document.getElementById('reset-cards-btn');
         const confirmSelectionBtn = document.getElementById('confirm-selection-btn');
         const newGameBtn = document.getElementById('new-game-btn');
+        const selectSingleBtn = document.getElementById('select-single-btn');
+        const selectHalftenBtn = document.getElementById('select-halften-btn');
+        const selectPokerBtn = document.getElementById('select-poker-btn');
         
         // 初始化扑克牌并洗牌
         function initializeDeck() {
@@ -480,6 +611,129 @@
             drawCardsBtn.addEventListener('click', drawCards);
             resetCardsBtn.addEventListener('click', resetSelection);
             confirmSelectionBtn.addEventListener('click', confirmSelection);
+            
+            // 绑定选择模式按钮
+            selectSingleBtn.addEventListener('click', function() {
+                setSelectionMode('single');
+            });
+            
+            selectHalftenBtn.addEventListener('click', function() {
+                setSelectionMode('halften');
+            });
+            
+            selectPokerBtn.addEventListener('click', function() {
+                setSelectionMode('poker');
+            });
+        }
+        
+        // 设置选择模式
+        function setSelectionMode(mode) {
+            gameState.currentMode = mode;
+            
+            // 更新模式显示
+            selectionMode.style.display = 'block';
+            
+            const modeText = mode === 'single' ? '单张比大小' : 
+                           (mode === 'halften' ? '十点半' : '炸金花');
+            currentMode.textContent = modeText;
+            
+            // 更新卡牌可选择状态
+            updateCardSelectable();
+            
+            showNotification(`请选择牌用于${modeText}`);
+        }
+        
+        // 更新卡牌可选择状态
+        function updateCardSelectable() {
+            // 移除所有卡牌的可选择状态
+            document.querySelectorAll('#player-hand .card').forEach(card => {
+                card.classList.remove('selectable');
+            });
+            
+            // 如果没有选择模式，则退出
+            if (!gameState.currentMode) return;
+            
+            // 获取所有未被选择的卡牌
+            document.querySelectorAll('#player-hand .card:not(.selected)').forEach(card => {
+                card.classList.add('selectable');
+                
+                // 清除之前的点击事件
+                card.removeEventListener('click', cardClickHandler);
+                
+                // 添加新的点击事件
+                card.addEventListener('click', cardClickHandler);
+            });
+        }
+        
+        // 卡牌点击处理
+        function cardClickHandler(e) {
+            if (!gameState.currentMode) return;
+            
+            const cardIndex = this.dataset.index;
+            const card = gameState.playerCards[cardIndex];
+            
+            if (gameState.currentMode === 'single') {
+                // 单张模式
+                handleCardSelection(cardIndex, 'single', 0, card);
+            } else if (gameState.currentMode === 'halften') {
+                // 十点半模式
+                const nextEmptySlot = getNextEmptySlot('halften');
+                if (nextEmptySlot !== -1) {
+                    handleCardSelection(cardIndex, 'halften', nextEmptySlot, card);
+                }
+            } else if (gameState.currentMode === 'poker') {
+                // 炸金花模式
+                const nextEmptySlot = getNextEmptySlot('poker');
+                if (nextEmptySlot !== -1) {
+                    handleCardSelection(cardIndex, 'poker', nextEmptySlot, card);
+                }
+            }
+            
+            // 检查是否完成当前模式的选择
+            checkModeCompleted();
+        }
+        
+        // 获取下一个空卡槽
+        function getNextEmptySlot(gameType) {
+            const slots = document.querySelectorAll(`.card-slot[data-game="${gameType}"]:not(.filled)`);
+            if (slots.length > 0) {
+                return parseInt(slots[0].dataset.slot);
+            }
+            return -1;
+        }
+        
+        // 检查当前模式是否完成选择
+        function checkModeCompleted() {
+            if (!gameState.currentMode) return;
+            
+            let isCompleted = false;
+            
+            if (gameState.currentMode === 'single') {
+                isCompleted = gameState.playerSelection.single !== null;
+            } else if (gameState.currentMode === 'halften') {
+                isCompleted = gameState.playerSelection.halften.length === 2 && 
+                             gameState.playerSelection.halften[0] !== null && 
+                             gameState.playerSelection.halften[1] !== null;
+            } else if (gameState.currentMode === 'poker') {
+                isCompleted = gameState.playerSelection.poker.length === 3 && 
+                             gameState.playerSelection.poker[0] !== null && 
+                             gameState.playerSelection.poker[1] !== null && 
+                             gameState.playerSelection.poker[2] !== null;
+            }
+            
+            if (isCompleted) {
+                // 重置当前模式
+                gameState.currentMode = null;
+                selectionMode.style.display = 'none';
+                
+                // 移除所有卡牌的可选择状态
+                document.querySelectorAll('#player-hand .card').forEach(card => {
+                    card.classList.remove('selectable');
+                    card.removeEventListener('click', cardClickHandler);
+                });
+                
+                showNotification('选择完成！');
+            }
         }
         
         // 抽取卡牌
@@ -513,9 +767,8 @@
             playArea.style.display = 'block';
             cardSelection.style.display = 'block';
             
-            // 渲染手牌并初始化拖放功能
+            // 渲染手牌
             renderPlayerHand();
-            initializeDragAndDrop();
         }
         
         // 让电脑随机选择牌
@@ -554,7 +807,6 @@
                 const cardElement = document.createElement('div');
                 cardElement.classList.add('card', 'flipped');
                 cardElement.dataset.index = index;
-                cardElement.draggable = true;
                 
                 cardElement.innerHTML = `
                     <div class="card-inner">
@@ -570,51 +822,8 @@
             });
         }
         
-        // 初始化拖放功能
-        function initializeDragAndDrop() {
-            // 为所有卡牌添加拖拽事件
-            document.querySelectorAll('#player-hand .card').forEach(card => {
-                card.addEventListener('dragstart', function(e) {
-                    if (this.classList.contains('selected')) {
-                        e.preventDefault();
-                        return false;
-                    }
-                    
-                    e.dataTransfer.setData('text/plain', this.dataset.index);
-                    this.classList.add('dragging');
-                });
-                
-                card.addEventListener('dragend', function() {
-                    this.classList.remove('dragging');
-                });
-            });
-            
-            // 为所有卡槽添加拖放事件
-            document.querySelectorAll('.card-slot').forEach(slot => {
-                slot.addEventListener('dragover', e => {
-                    e.preventDefault();
-                    slot.classList.add('highlight');
-                });
-                
-                slot.addEventListener('dragleave', () => {
-                    slot.classList.remove('highlight');
-                });
-                
-                slot.addEventListener('drop', function(e) {
-                    e.preventDefault();
-                    this.classList.remove('highlight');
-                    
-                    const cardIndex = e.dataTransfer.getData('text/plain');
-                    const gameType = this.dataset.game;
-                    const slotIndex = parseInt(this.dataset.slot);
-                    
-                    handleCardDrop(cardIndex, gameType, slotIndex, gameState.playerCards[cardIndex]);
-                });
-            });
-        }
-        
-        // 处理卡牌放入卡槽
-        function handleCardDrop(cardIndex, gameType, slotIndex, card) {
+        // 处理卡牌选择
+        function handleCardSelection(cardIndex, gameType, slotIndex, card) {
             // 获取卡槽元素
             const slot = document.querySelector(`.card-slot[data-game="${gameType}"][data-slot="${slotIndex}"]`);
             if (!slot) return;
@@ -638,7 +847,6 @@
                     const originalCard = document.querySelector(`#player-hand .card[data-index="${originalCardIndex}"]`);
                     if (originalCard) {
                         originalCard.classList.remove('selected');
-                        originalCard.style.pointerEvents = 'auto';
                     }
                 }
                 
@@ -664,6 +872,8 @@
             const originalCard = document.querySelector(`#player-hand .card[data-index="${cardIndex}"]`);
             if (originalCard) {
                 originalCard.classList.add('selected');
+                originalCard.classList.remove('selectable');
+                originalCard.removeEventListener('click', cardClickHandler);
             }
             
             // 更新游戏状态
@@ -676,6 +886,11 @@
             } else if (gameType === 'poker') {
                 playerSelection.poker[slotIndex] = { index: parseInt(cardIndex), card: card };
             }
+            
+            // 如果在选择模式中，更新可选择状态
+            if (gameState.currentMode) {
+                updateCardSelectable();
+            }
         }
         
         // 重置选择
@@ -685,19 +900,20 @@
             // 恢复所有卡牌的可选择状态
             document.querySelectorAll('#player-hand .card.selected').forEach(card => {
                 card.classList.remove('selected');
-                card.style.pointerEvents = 'auto';
             });
             
             // 重置游戏状态
             playerSelection.single = null;
             playerSelection.halften = [];
             playerSelection.poker = [];
+            gameState.currentMode = null;
+            selectionMode.style.display = 'none';
             
             // 重置界面
             const slots = document.querySelectorAll('.card-slot');
             slots.forEach(slot => {
-                slot.innerHTML = slot.dataset.game === 'single' ? '拖放一张牌到这里' : 
-                                 `拖放第${parseInt(slot.dataset.slot) + 1}张牌`;
+                slot.innerHTML = slot.dataset.game === 'single' ? '点击选择一张牌' : 
+                                 `点击选择第${parseInt(slot.dataset.slot) + 1}张牌`;
                 slot.classList.remove('filled');
             });
         }
@@ -742,6 +958,7 @@
                 halften: [],
                 poker: []
             };
+            gameState.currentMode = null;
             
             // 清空玩家手牌区域
             playerHand.innerHTML = '';
@@ -761,7 +978,7 @@
             
             setTimeout(() => {
                 notification.classList.remove('show');
-            }, 3000);
+            }, 2000);
         }
         
         // 初始化
