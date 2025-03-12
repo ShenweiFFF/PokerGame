@@ -6,11 +6,15 @@
     <title>扑克牌游戏</title>
     <style>
         :root {
-            --primary-color: #3498db;
-            --secondary-color: #e74c3c;
-            --bg-color: #f5f5f5;
-            --card-width: 90px;
-            --card-height: 126px;
+            --primary-color: #7e57c2;
+            --secondary-color: #ff7043;
+            --bg-color: #121212;
+            --surface-color: #1e1e1e;
+            --card-color: #2d2d2d;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --card-width: 100px;
+            --card-height: 140px;
         }
         
         * {
@@ -24,41 +28,43 @@
             background-color: var(--bg-color);
             padding: 20px;
             min-height: 100vh;
+            color: var(--text-primary);
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            background-color: white;
+            background-color: var(--surface-color);
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
         
         h1, h2, h3 {
             text-align: center;
             margin-bottom: 20px;
-            color: #333;
+            color: var(--text-primary);
         }
         
         .game-info {
-            background-color: #f8f9fa;
+            background-color: var(--card-color);
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            color: var(--text-secondary);
         }
         
         .button-group {
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 8px;
-            margin: 10px 0;
+            gap: 10px;
+            margin: 15px 0;
         }
         
         button {
-            padding: 12px 20px;
+            padding: 12px 24px;
             background-color: var(--primary-color);
             color: white;
             border: none;
@@ -66,11 +72,12 @@
             cursor: pointer;
             font-size: 16px;
             transition: background-color 0.3s, transform 0.2s;
-            min-width: 120px;
+            min-width: 130px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
         }
         
         button:hover {
-            background-color: #2980b9;
+            background-color: #9575cd;
             transform: translateY(-2px);
         }
         
@@ -83,7 +90,7 @@
         }
         
         button.secondary:hover {
-            background-color: #c0392b;
+            background-color: #ff9e80;
         }
         
         .game-area {
@@ -93,16 +100,16 @@
         .card-deck {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
             margin: 20px 0;
         }
         
         .card {
             width: var(--card-width);
             height: var(--card-height);
-            background-color: white;
+            background-color: var(--card-color);
             border-radius: 10px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
             position: relative;
             perspective: 1000px;
             transition: transform 0.3s;
@@ -111,6 +118,7 @@
         
         .card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
         }
         
         .card-inner {
@@ -136,99 +144,105 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-direction: column;
         }
         
         .card-front {
-            background-image: linear-gradient(45deg, #6d83f2, #4481eb);
+            background-color: #2d2d2d;
             color: white;
             font-size: 24px;
             transform: rotateY(180deg);
+            border: 2px solid rgba(255, 255, 255, 0.1);
         }
         
         .card-back {
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%234481eb" /><path d="M0 0L100 100M100 0L0 100" stroke="%23ffffff" stroke-width="2" /></svg>');
+            background-image: linear-gradient(135deg, #303030 25%, #383838 25%, #383838 50%, #303030 50%, #303030 75%, #383838 75%, #383838 100%);
             background-size: 20px 20px;
-            background-color: #3498db;
-            border: 5px solid white;
+            background-color: #333;
+            border: 5px solid rgba(255, 255, 255, 0.1);
         }
         
         .card-value {
-            font-size: 32px;
+            font-size: 35px;
             font-weight: bold;
+            margin-bottom: 5px;
         }
         
         .card-suit {
-            font-size: 48px;
+            font-size: 50px;
             line-height: 1;
         }
         
         .red {
-            color: #e74c3c;
+            color: #ff5252;
         }
         
         .black {
-            color: #2c3e50;
+            color: #e0e0e0;
         }
         
         .player-hand {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 8px;
-            margin: 10px 0;
+            gap: 12px;
+            margin: 15px 0;
         }
         
         .card-selection {
             display: none;
-            margin: 5px 0;
+            margin: 10px 0;
             order: 1;
         }
         
         .game-section {
-            background-color: #f8f9fa;
+            background-color: var(--card-color);
             padding: 15px;
             border-radius: 10px;
             margin-bottom: 15px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         
         .game-section h3 {
             margin-top: 0;
             margin-bottom: 10px;
             font-size: 18px;
+            color: var(--text-primary);
         }
         
         .card-slots {
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 8px;
-            margin: 10px 0;
+            gap: 12px;
+            margin: 15px 0;
         }
         
         .card-slot {
             width: var(--card-width);
             height: var(--card-height);
-            border: 2px dashed #bdc3c7;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #95a5a6;
+            color: var(--text-secondary);
             font-size: 14px;
             transition: all 0.3s;
             text-align: center;
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 10px;
         }
         
         .card-slot.highlight {
             border-color: var(--primary-color);
-            background-color: rgba(52, 152, 219, 0.1);
+            background-color: rgba(126, 87, 194, 0.2);
         }
         
         .card-slot.filled {
             border-style: solid;
-            border-color: #27ae60;
-            background-color: rgba(46, 204, 113, 0.05);
+            border-color: var(--secondary-color);
+            background-color: rgba(255, 112, 67, 0.1);
         }
         
         .notification {
@@ -236,11 +250,11 @@
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: #2ecc71;
+            background-color: var(--primary-color);
             color: white;
             padding: 12px 20px;
             border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
             opacity: 0;
             transition: opacity 0.3s;
             z-index: 1000;
@@ -257,12 +271,12 @@
         #play-area {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 15px;
         }
         
         /* 卡牌选择区放在上方 */
         .card-selection {
-            margin: 5px 0 15px 0;
+            margin: 10px 0 20px 0;
             order: 1;
         }
         
@@ -270,14 +284,14 @@
         .game-section-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 15px;
             width: 100%;
         }
         
         /* 为已选择的卡牌添加样式 */
         .card.selected {
-            opacity: 0.5;
-            border: 2px solid #e74c3c;
+            opacity: 0.6;
+            border: 2px solid var(--secondary-color);
         }
         
         /* 卡牌点击交互样式 */
@@ -293,7 +307,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: rgba(52, 152, 219, 0.1);
+            background-color: rgba(126, 87, 194, 0.2);
             border-radius: 10px;
             opacity: 0;
             transition: opacity 0.2s;
@@ -307,23 +321,24 @@
         .selection-mode {
             background-color: var(--primary-color);
             color: white;
-            padding: 8px 12px;
+            padding: 8px 16px;
             border-radius: 20px;
-            font-size: 14px;
+            font-size: 15px;
             display: inline-block;
-            margin: 5px auto;
+            margin: 8px auto;
             text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
         }
         
         /* 响应式设计优化 */
         @media (max-width: 768px) {
             :root {
-                --card-width: 70px;
-                --card-height: 98px;
+                --card-width: 85px;
+                --card-height: 119px;
             }
             
             .container {
-                padding: 10px;
+                padding: 15px;
             }
             
             h1 {
@@ -340,11 +355,11 @@
             }
             
             .card-value {
-                font-size: 24px;
+                font-size: 28px;
             }
             
             .card-suit {
-                font-size: 30px;
+                font-size: 40px;
             }
             
             .game-section-container {
@@ -354,7 +369,7 @@
             button {
                 padding: 12px 16px;
                 font-size: 15px;
-                min-width: 100px;
+                min-width: 110px;
             }
             
             .game-info {
@@ -369,8 +384,8 @@
         
         @media (max-width: 480px) {
             :root {
-                --card-width: 55px;
-                --card-height: 77px;
+                --card-width: 70px;
+                --card-height: 98px;
             }
             
             body {
@@ -378,33 +393,33 @@
             }
             
             .container {
-                padding: 8px;
+                padding: 10px;
             }
             
             .card-value {
-                font-size: 20px;
-            }
-            
-            .card-suit {
                 font-size: 24px;
             }
             
+            .card-suit {
+                font-size: 32px;
+            }
+            
             .player-hand {
-                gap: 5px;
+                gap: 8px;
             }
             
             .card-slots {
-                gap: 5px;
+                gap: 8px;
             }
             
             .game-section {
-                padding: 10px;
+                padding: 12px;
             }
             
             button {
                 padding: 10px 15px;
                 font-size: 14px;
-                min-width: 90px;
+                min-width: 95px;
             }
         }
         
